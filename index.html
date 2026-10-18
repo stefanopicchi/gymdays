@@ -67,10 +67,10 @@
         <!-- CALENDAR TAB -->
         <div id="tab-dashboard" class="space-y-6">
             <div class="bg-lightCard dark:bg-darkCard border border-lightBorder dark:border-darkBorder rounded-2xl p-6 shadow-sm">
-                <div class="flex items-center justify-between mb-6">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
                     <h2 id="calendar-month-year" class="text-lg font-bold">Mese Anno</h2>
                     
-                    <div class="flex items-center space-x-4">
+                    <div class="flex flex-wrap items-center gap-3">
                         <div class="flex bg-slate-100 dark:bg-darkBg rounded-lg p-1 border border-lightBorder dark:border-darkBorder">
                             <button id="btn-view-month" onclick="setCalendarView('month')" class="px-3 py-1 rounded-md text-xs font-bold bg-white dark:bg-darkCard shadow-sm text-slate-800 dark:text-white transition">Mese</button>
                             <button id="btn-view-year" onclick="setCalendarView('year')" class="px-3 py-1 rounded-md text-xs font-medium text-slate-500 hover:text-slate-800 dark:hover:text-white transition">Anno</button>
@@ -135,13 +135,47 @@
 
         <!-- WORKOUTS TAB -->
         <div id="tab-workouts" class="hidden space-y-6">
+            <!-- SCHEDE DI ALLENAMENTO SECTION -->
             <div class="bg-lightCard dark:bg-darkCard border border-lightBorder dark:border-darkBorder rounded-2xl p-6 shadow-sm">
-                <h2 class="text-lg font-bold mb-4">Gestione Tipi di Allenamento</h2>
-                <form id="workout-type-form" onsubmit="addWorkoutType(event)" class="flex gap-3 mb-6">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
+                    <div>
+                        <h2 class="text-lg font-bold">Gestione Scheda Attiva</h2>
+                        <p class="text-sm text-slate-500 dark:text-slate-400">Passa ad una nuova scheda o creane una nuova per suddividere i periodi di allenamento.</p>
+                    </div>
+                    <button onclick="openProgramModal()" class="bg-accent hover:bg-accentHover text-white px-4 py-2.5 rounded-xl text-sm font-medium transition shadow-md shadow-blue-500/20 whitespace-nowrap"><i class="fa-solid fa-plus mr-1.5"></i> Nuova Scheda</button>
+                </div>
+                
+                <div class="flex items-center gap-3 bg-slate-50 dark:bg-darkBg border border-lightBorder dark:border-darkBorder rounded-xl p-4">
+                    <div class="w-10 h-10 rounded-xl bg-blue-500/10 text-accent flex items-center justify-center shrink-0">
+                        <i class="fa-solid fa-layer-group text-lg"></i>
+                    </div>
+                    <div class="flex-grow">
+                        <span class="text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400 block">Scheda in Uso</span>
+                        <select id="active-program-select" onchange="switchProgram(this.value)" class="bg-transparent font-bold text-base focus:outline-none w-full cursor-pointer mt-0.5"></select>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <button onclick="openProgramModal(true)" class="p-2 rounded-lg text-slate-500 hover:bg-slate-200 dark:hover:bg-darkBorder transition" title="Rinomina scheda"><i class="fa-solid fa-pen text-sm"></i></button>
+                        <button onclick="deleteCurrentProgram()" class="p-2 rounded-lg text-rose-500 hover:bg-rose-500/10 transition" title="Elimina scheda"><i class="fa-solid fa-trash-can text-sm"></i></button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TIPI DI ALLENAMENTO NELLA SCHEDA -->
+            <div class="bg-lightCard dark:bg-darkCard border border-lightBorder dark:border-darkBorder rounded-2xl p-6 shadow-sm">
+                <div class="flex justify-between items-center mb-4">
+                    <div>
+                        <h2 class="text-lg font-bold">Tipi di Allenamento della Scheda</h2>
+                        <p class="text-sm text-slate-500 dark:text-slate-400">Aggiungi, riordina o personalizza colore e nome dei workout.</p>
+                    </div>
+                </div>
+                <form id="workout-type-form" onsubmit="addWorkoutType(event)" class="flex flex-col sm:flex-row gap-3 mb-6">
                     <input type="text" id="new-workout-type-name" placeholder="Es. Petto e Tricipiti..." required class="flex-grow bg-slate-50 dark:bg-darkBg border border-lightBorder dark:border-darkBorder rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-accent">
-                    <button type="submit" class="bg-accent hover:bg-accentHover text-white px-5 py-2.5 rounded-xl text-sm font-medium transition shadow-md shadow-blue-500/20"><i class="fa-solid fa-plus mr-1.5"></i> Aggiungi</button>
+                    <div class="flex items-center gap-2">
+                        <input type="color" id="new-workout-type-color" value="#3b82f6" class="w-11 h-10 rounded-xl border border-lightBorder dark:border-darkBorder bg-transparent cursor-pointer p-1">
+                        <button type="submit" class="bg-accent hover:bg-accentHover text-white px-5 py-2.5 rounded-xl text-sm font-medium transition shadow-md shadow-blue-500/20 whitespace-nowrap"><i class="fa-solid fa-plus mr-1.5"></i> Aggiungi</button>
+                    </div>
                 </form>
-                <div id="workout-types-list" class="space-y-2"></div>
+                <div id="workout-types-list" class="space-y-2.5"></div>
             </div>
 
             <!-- BACKUP & RESTORE CARD -->
@@ -161,7 +195,7 @@
         </div>
     </main>
 
-    <!-- MODAL -->
+    <!-- WORKOUT LOG MODAL -->
     <div id="workout-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
         <div class="bg-lightCard dark:bg-darkCard border border-lightBorder dark:border-darkBorder rounded-2xl max-w-md w-full p-6 shadow-xl relative">
             <div class="flex items-center justify-between mb-4">
@@ -197,12 +231,51 @@
         </div>
     </div>
 
+    <!-- PROGRAM (SCHEDA) MODAL -->
+    <div id="program-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-lightCard dark:bg-darkCard border border-lightBorder dark:border-darkBorder rounded-2xl max-w-sm w-full p-6 shadow-xl relative">
+            <div class="flex items-center justify-between mb-4">
+                <h3 id="program-modal-title" class="text-base font-bold">Nuova Scheda</h3>
+                <button onclick="closeProgramModal()" class="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:bg-slate-100 dark:hover:bg-darkBorder transition"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form onsubmit="saveProgram(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">Nome della Scheda</label>
+                    <input type="text" id="program-name-input" placeholder="Es. Scheda Forza Inverno..." required class="w-full bg-slate-50 dark:bg-darkBg border border-lightBorder dark:border-darkBorder rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-accent">
+                </div>
+                <div class="flex space-x-3 pt-2">
+                    <button type="submit" class="flex-grow bg-accent hover:bg-accentHover text-white py-2.5 rounded-xl text-sm font-medium transition shadow-md shadow-blue-500/20">Salva</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script>
         let currentDate = new Date(); 
         let selectedDateStr = null;
         let currentView = 'month';
         
-        let workoutTypes = JSON.parse(localStorage.getItem('gym_workout_types')) || ["Petto e Tricipiti", "Dorso e Bicipiti", "Gambe", "Spalle e Addome", "Full Body", "Cardio / HIIT"];
+        // --- MULTI-PROGRAM DATA STRUCTURE ---
+        // programs: { programId: { name: string, types: [{id, name, color}] } }
+        let programs = JSON.parse(localStorage.getItem('gym_programs')) || {
+            "default": {
+                name: "Scheda Principale",
+                types: [
+                    { id: "t1", name: "Petto e Tricipiti", color: "#ef4444" },
+                    { id: "t2", name: "Dorso e Bicipiti", color: "#3b82f6" },
+                    { id: "t3", name: "Gambe", color: "#10b981" },
+                    { id: "t4", name: "Spalle e Addome", color: "#f59e0b" },
+                    { id: "t5", name: "Full Body", color: "#8b5cf6" },
+                    { id: "t6", name: "Cardio / HIIT", color: "#ec4899" }
+                ]
+            }
+        };
+        let activeProgramId = localStorage.getItem('gym_active_program') || "default";
+        if (!programs[activeProgramId]) {
+            activeProgramId = Object.keys(programs)[0];
+        }
+
+        // workouts: { dateStr: { type: string, duration, satisfaction, notes, programId } }
         let workouts = JSON.parse(localStorage.getItem('gym_workouts')) || {};
 
         if (localStorage.getItem('gym_theme') === 'dark' || (!localStorage.getItem('gym_theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
@@ -234,6 +307,7 @@
             } else if (tabName === 'workouts') { 
                 document.getElementById('tab-workouts').classList.remove('hidden'); 
                 document.getElementById('nav-workouts').className = "px-3 py-1.5 rounded-lg text-sm font-medium transition bg-accent text-white"; 
+                renderProgramSelect();
                 renderWorkoutTypesList(); 
             }
         }
@@ -269,6 +343,24 @@
             updateStats();
         }
 
+        // Helper to find workout type color across any program (or active program)
+        function getWorkoutColor(typeName, progId) {
+            // Check specific program if provided, or search active first, then all
+            if (progId && programs[progId]) {
+                const found = programs[progId].types.find(t => t.name === typeName);
+                if (found) return found.color;
+            }
+            if (programs[activeProgramId]) {
+                const found = programs[activeProgramId].types.find(t => t.name === typeName);
+                if (found) return found.color;
+            }
+            for (let pid in programs) {
+                const found = programs[pid].types.find(t => t.name === typeName);
+                if (found) return found.color;
+            }
+            return '#3b82f6';
+        }
+
         function renderMonthView() {
             const grid = document.getElementById('calendar-grid'); grid.innerHTML = '';
             const year = currentDate.getFullYear(); const month = currentDate.getMonth();
@@ -296,8 +388,18 @@
                 div.className = "aspect-square rounded-xl p-2 flex flex-col justify-between relative transition text-sm cursor-pointer shadow-sm ";
                 
                 if (hasWorkout) {
-                    div.className += "bg-accent text-white border border-accent shadow-md shadow-accent/30";
-                    if (isToday) div.className += " ring-2 ring-offset-2 ring-offset-lightCard dark:ring-offset-darkCard ring-accent";
+                    const color = getWorkoutColor(hasWorkout.type, hasWorkout.programId);
+                    div.style.backgroundColor = color;
+                    div.style.borderColor = color;
+                    div.className += "text-white shadow-md";
+                    
+                    // Program switch indicator: dashed border or subtle ring if different program from active
+                    if (hasWorkout.programId && hasWorkout.programId !== activeProgramId) {
+                        div.style.borderWidth = "3px";
+                        div.style.borderColor = "#ffffff";
+                    }
+                    
+                    if (isToday) div.className += " ring-2 ring-offset-2 ring-offset-lightCard dark:ring-offset-darkCard ring-white dark:ring-white";
                 } else {
                     div.className += "border border-lightBorder dark:border-darkBorder bg-lightCard dark:bg-darkCard hover:border-accent";
                     if (isToday) div.className += " ring-2 ring-accent/50";
@@ -305,7 +407,8 @@
                 
                 let content = `<div class="flex justify-between items-start"><span class="font-medium ${isToday && !hasWorkout ? 'text-accent font-bold' : ''}">${day}</span></div>`;
                 if (hasWorkout) {
-                    content += `<div class="text-[10px] bg-white/20 text-white font-semibold px-1.5 py-0.5 rounded truncate mt-1">${hasWorkout.type}</div>`; 
+                    let progBadge = (hasWorkout.programId && hasWorkout.programId !== activeProgramId && programs[hasWorkout.programId]) ? ` <span class="opacity-75 text-[9px]">(${programs[hasWorkout.programId].name.split(' ')[0]})</span>` : '';
+                    content += `<div class="text-[10px] bg-black/25 text-white font-semibold px-1.5 py-0.5 rounded truncate mt-1">${hasWorkout.type}${progBadge}</div>`; 
                 } else {
                     content += `<div></div>`;
                 }
@@ -361,14 +464,19 @@
                     cell.className = "aspect-square rounded-[3px] flex items-center justify-center cursor-pointer transition-transform hover:scale-125 ";
                     
                     if (hasW) {
-                        cell.className += "bg-accent shadow-sm shadow-accent/40";
+                        const color = getWorkoutColor(hasW.type, hasW.programId);
+                        cell.style.backgroundColor = color;
+                        cell.className += "shadow-sm";
+                        if (hasW.programId && hasW.programId !== activeProgramId) {
+                            cell.style.border = "1px solid white";
+                        }
                     } else {
                         cell.className += "bg-slate-100 dark:bg-darkBorder/40 hover:bg-slate-200 dark:hover:bg-darkBorder";
                     }
                     if (isToday && !hasW) {
                         cell.className += " ring-1 ring-accent";
                     } else if (isToday && hasW) {
-                        cell.className += " ring-1 ring-offset-1 ring-offset-lightCard dark:ring-offset-darkCard ring-accent";
+                        cell.className += " ring-1 ring-offset-1 ring-offset-lightCard dark:ring-offset-darkCard ring-white";
                     }
                     
                     cell.onclick = () => openModal(dateStr);
@@ -394,48 +502,247 @@
         }
         
         function openModal(dateStr) {
-            selectedDateStr = dateStr; const typeSelect = document.getElementById('modal-workout-type');
+            selectedDateStr = dateStr; 
+            const typeSelect = document.getElementById('modal-workout-type');
             typeSelect.innerHTML = '<option value="">Seleziona tipo...</option>';
-            workoutTypes.forEach(wt => { const opt = document.createElement('option'); opt.value = wt; opt.textContent = wt; typeSelect.appendChild(opt); });
-            const parts = dateStr.split('-'); document.getElementById('modal-date-title').textContent = `Allenamento del ${parts[2]}/${parts[1]}/${parts[0]}`;
+            
+            // Populate types from active program
+            if (programs[activeProgramId] && programs[activeProgramId].types) {
+                programs[activeProgramId].types.forEach(wt => { 
+                    const opt = document.createElement('option'); 
+                    opt.value = wt.name; 
+                    opt.textContent = wt.name; 
+                    typeSelect.appendChild(opt); 
+                });
+            }
+            
+            const parts = dateStr.split('-'); 
+            document.getElementById('modal-date-title').textContent = `Allenamento del ${parts[2]}/${parts[1]}/${parts[0]}`;
+            
             if (workouts[dateStr]) {
-                const w = workouts[dateStr]; typeSelect.value = w.type; document.getElementById('modal-workout-duration').value = w.duration;
-                document.getElementById('modal-workout-satisfaction').value = w.satisfaction; updateSatisfactionLabel(w.satisfaction);
-                document.getElementById('modal-workout-notes').value = w.notes || ''; document.getElementById('delete-workout-btn').classList.remove('hidden');
+                const w = workouts[dateStr]; 
+                typeSelect.value = w.type; 
+                document.getElementById('modal-workout-duration').value = w.duration;
+                document.getElementById('modal-workout-satisfaction').value = w.satisfaction; 
+                updateSatisfactionLabel(w.satisfaction);
+                document.getElementById('modal-workout-notes').value = w.notes || ''; 
+                document.getElementById('delete-workout-btn').classList.remove('hidden');
             } else {
-                typeSelect.value = ''; document.getElementById('modal-workout-duration').value = 60; document.getElementById('modal-workout-satisfaction').value = 8;
-                updateSatisfactionLabel(8); document.getElementById('modal-workout-notes').value = ''; document.getElementById('delete-workout-btn').classList.add('hidden');
+                typeSelect.value = ''; 
+                document.getElementById('modal-workout-duration').value = 60; 
+                document.getElementById('modal-workout-satisfaction').value = 8;
+                updateSatisfactionLabel(8); 
+                document.getElementById('modal-workout-notes').value = ''; 
+                document.getElementById('delete-workout-btn').classList.add('hidden');
             }
             document.getElementById('workout-modal').classList.remove('hidden');
         }
 
         function closeModal() { document.getElementById('workout-modal').classList.add('hidden'); selectedDateStr = null; }
         function updateSatisfactionLabel(val) { document.getElementById('satisfaction-value').textContent = val; }
+        
         function saveWorkout(event) {
-            event.preventDefault(); if (!selectedDateStr) return;
-            workouts[selectedDateStr] = { type: document.getElementById('modal-workout-type').value, duration: parseInt(document.getElementById('modal-workout-duration').value), satisfaction: parseInt(document.getElementById('modal-workout-satisfaction').value), notes: document.getElementById('modal-workout-notes').value };
-            localStorage.setItem('gym_workouts', JSON.stringify(workouts)); closeModal(); renderCalendar();
-        }
-        function deleteWorkout() {
-            if (confirm("Vuoi eliminare questo allenamento?")) { delete workouts[selectedDateStr]; localStorage.setItem('gym_workouts', JSON.stringify(workouts)); closeModal(); renderCalendar(); }
+            event.preventDefault(); 
+            if (!selectedDateStr) return;
+            workouts[selectedDateStr] = { 
+                type: document.getElementById('modal-workout-type').value, 
+                duration: parseInt(document.getElementById('modal-workout-duration').value), 
+                satisfaction: parseInt(document.getElementById('modal-workout-satisfaction').value), 
+                notes: document.getElementById('modal-workout-notes').value,
+                programId: activeProgramId // Tag workout with active program ID
+            };
+            localStorage.setItem('gym_workouts', JSON.stringify(workouts)); 
+            closeModal(); 
+            renderCalendar();
         }
         
+        function deleteWorkout() {
+            if (confirm("Vuoi eliminare questo allenamento?")) { 
+                delete workouts[selectedDateStr]; 
+                localStorage.setItem('gym_workouts', JSON.stringify(workouts)); 
+                closeModal(); 
+                renderCalendar(); 
+            }
+        }
+        
+        // --- PROGRAM & WORKOUT TYPES MANAGEMENT ---
+        function renderProgramSelect() {
+            const select = document.getElementById('active-program-select');
+            select.innerHTML = '';
+            for (let pid in programs) {
+                const opt = document.createElement('option');
+                opt.value = pid;
+                opt.textContent = programs[pid].name;
+                if (pid === activeProgramId) opt.selected = true;
+                select.appendChild(opt);
+            }
+        }
+
+        function switchProgram(pid) {
+            activeProgramId = pid;
+            localStorage.setItem('gym_active_program', activeProgramId);
+            renderWorkoutTypesList();
+        }
+
+        let editingProgramFlag = false;
+        function openProgramModal(isRename = false) {
+            editingProgramFlag = isRename;
+            const title = document.getElementById('program-modal-title');
+            const input = document.getElementById('program-name-input');
+            if (isRename) {
+                title.textContent = "Rinomina Scheda";
+                input.value = programs[activeProgramId] ? programs[activeProgramId].name : "";
+            } else {
+                title.textContent = "Nuova Scheda";
+                input.value = "";
+            }
+            document.getElementById('program-modal').classList.remove('hidden');
+        }
+
+        function closeProgramModal() {
+            document.getElementById('program-modal').classList.add('hidden');
+        }
+
+        function saveProgram(event) {
+            event.preventDefault();
+            const name = document.getElementById('program-name-input').value.trim();
+            if (!name) return;
+
+            if (editingProgramFlag) {
+                if (programs[activeProgramId]) {
+                    programs[activeProgramId].name = name;
+                }
+            } else {
+                const newId = 'prog_' + Date.now();
+                // Copy current types as a starting template or start clean
+                const currentTypes = programs[activeProgramId] ? JSON.parse(JSON.stringify(programs[activeProgramId].types)) : [
+                    { id: 't_1', name: 'Workout A', color: '#3b82f6' },
+                    { id: 't_2', name: 'Workout B', color: '#10b981' },
+                    { id: 't_3', name: 'Workout C', color: '#f59e0b' }
+                ];
+                programs[newId] = { name: name, types: currentTypes };
+                activeProgramId = newId;
+                localStorage.setItem('gym_active_program', activeProgramId);
+            }
+            localStorage.setItem('gym_programs', JSON.stringify(programs));
+            closeProgramModal();
+            renderProgramSelect();
+            renderWorkoutTypesList();
+            renderCalendar();
+        }
+
+        function deleteCurrentProgram() {
+            const keys = Object.keys(programs);
+            if (keys.length <= 1) {
+                alert("Devi mantenere almeno una scheda.");
+                return;
+            }
+            if (confirm(`Vuoi eliminare la scheda "${programs[activeProgramId].name}"?`)) {
+                delete programs[activeProgramId];
+                localStorage.setItem('gym_programs', JSON.stringify(programs));
+                activeProgramId = Object.keys(programs)[0];
+                localStorage.setItem('gym_active_program', activeProgramId);
+                renderProgramSelect();
+                renderWorkoutTypesList();
+                renderCalendar();
+            }
+        }
+
         function renderWorkoutTypesList() {
-            const listContainer = document.getElementById('workout-types-list'); listContainer.innerHTML = '';
-            if (workoutTypes.length === 0) { listContainer.innerHTML = `<p class="text-sm text-slate-400 italic">Nessun tipo inserito.</p>`; return; }
-            workoutTypes.forEach((wt, index) => {
-                const item = document.createElement('div'); item.className = "flex items-center justify-between p-3 bg-slate-50 dark:bg-darkBg border border-lightBorder dark:border-darkBorder rounded-xl";
-                item.innerHTML = `<span class="text-sm font-medium">${wt}</span><button onclick="removeWorkoutType(${index})" class="text-slate-400 hover:text-rose-500 transition p-1"><i class="fa-solid fa-trash-can text-sm"></i></button>`;
+            const listContainer = document.getElementById('workout-types-list'); 
+            listContainer.innerHTML = '';
+            
+            const currentProg = programs[activeProgramId];
+            if (!currentProg || !currentProg.types || currentProg.types.length === 0) { 
+                listContainer.innerHTML = `<p class="text-sm text-slate-400 italic">Nessun tipo inserito in questa scheda.</p>`; 
+                return; 
+            }
+            
+            currentProg.types.forEach((wt, index) => {
+                const item = document.createElement('div'); 
+                item.className = "flex items-center justify-between p-3.5 bg-slate-50 dark:bg-darkBg border border-lightBorder dark:border-darkBorder rounded-xl gap-3";
+                
+                let reorderButtons = `
+                    <div class="flex items-center space-x-1">
+                        <button onclick="moveWorkoutType(${index}, -1)" ${index === 0 ? 'disabled class="opacity-30 cursor-not-allowed p-1 text-slate-400"' : 'class="p-1 text-slate-500 hover:text-accent transition"'}>
+                            <i class="fa-solid fa-arrow-up text-xs"></i>
+                        </button>
+                        <button onclick="moveWorkoutType(${index}, 1)" ${index === currentProg.types.length - 1 ? 'disabled class="opacity-30 cursor-not-allowed p-1 text-slate-400"' : 'class="p-1 text-slate-500 hover:text-accent transition"'}>
+                            <i class="fa-solid fa-arrow-down text-xs"></i>
+                        </button>
+                    </div>
+                `;
+
+                item.innerHTML = `
+                    <div class="flex items-center space-x-3 flex-grow">
+                        ${reorderButtons}
+                        <input type="color" value="${wt.color}" onchange="updateWorkoutTypeColor('${wt.id}', this.value)" class="w-8 h-8 rounded-lg border border-lightBorder dark:border-darkBorder bg-transparent cursor-pointer p-0.5 shrink-0" title="Cambia colore">
+                        <span class="text-sm font-medium truncate">${wt.name}</span>
+                    </div>
+                    <div class="flex items-center space-x-1">
+                        <button onclick="removeWorkoutType('${wt.id}')" class="text-slate-400 hover:text-rose-500 transition p-2" title="Elimina"><i class="fa-solid fa-trash-can text-sm"></i></button>
+                    </div>
+                `;
                 listContainer.appendChild(item);
             });
         }
+
         function addWorkoutType(event) {
-            event.preventDefault(); const val = document.getElementById('new-workout-type-name').value.trim();
-            if (val && !workoutTypes.includes(val)) { workoutTypes.push(val); localStorage.setItem('gym_workout_types', JSON.stringify(workoutTypes)); document.getElementById('new-workout-type-name').value = ''; renderWorkoutTypesList(); }
+            event.preventDefault(); 
+            const nameInput = document.getElementById('new-workout-type-name');
+            const colorInput = document.getElementById('new-workout-type-color');
+            const val = nameInput.value.trim();
+            const color = colorInput.value;
+            
+            if (val && programs[activeProgramId]) {
+                // Check duplicate
+                if (programs[activeProgramId].types.some(t => t.name.toLowerCase() === val.toLowerCase())) {
+                    alert("Esiste già un allenamento con questo nome nella scheda attiva.");
+                    return;
+                }
+                const newId = 't_' + Date.now();
+                programs[activeProgramId].types.push({ id: newId, name: val, color: color });
+                localStorage.setItem('gym_programs', JSON.stringify(programs));
+                nameInput.value = '';
+                colorInput.value = '#3b82f6';
+                renderWorkoutTypesList();
+            }
         }
-        function removeWorkoutType(index) {
-            if (workoutTypes.length <= 1) { alert("Devi mantenere almeno un tipo."); return; }
-            if (confirm("Vuoi eliminare questo tipo?")) { workoutTypes.splice(index, 1); localStorage.setItem('gym_workout_types', JSON.stringify(workoutTypes)); renderWorkoutTypesList(); }
+
+        function updateWorkoutTypeColor(id, newColor) {
+            if (programs[activeProgramId]) {
+                const wt = programs[activeProgramId].types.find(t => t.id === id);
+                if (wt) {
+                    wt.color = newColor;
+                    localStorage.setItem('gym_programs', JSON.stringify(programs));
+                    renderCalendar();
+                }
+            }
+        }
+
+        function moveWorkoutType(index, direction) {
+            const types = programs[activeProgramId].types;
+            const targetIndex = index + direction;
+            if (targetIndex >= 0 && targetIndex < types.length) {
+                const temp = types[index];
+                types[index] = types[targetIndex];
+                types[targetIndex] = temp;
+                localStorage.setItem('gym_programs', JSON.stringify(programs));
+                renderWorkoutTypesList();
+            }
+        }
+
+        function removeWorkoutType(id) {
+            const types = programs[activeProgramId].types;
+            if (types.length <= 1) { 
+                alert("Devi mantenere almeno un tipo di allenamento."); 
+                return; 
+            }
+            if (confirm("Vuoi eliminare questo tipo di allenamento?")) { 
+                programs[activeProgramId].types = types.filter(t => t.id !== id);
+                localStorage.setItem('gym_programs', JSON.stringify(programs)); 
+                renderWorkoutTypesList(); 
+            }
         }
 
         function updateStats() {
@@ -488,10 +795,11 @@
         // --- BACKUP & RESTORE LOGIC ---
         function exportBackup() {
             const backupData = {
-                version: "1.0",
+                version: "2.0",
                 exportDate: new Date().toISOString(),
                 workouts: workouts,
-                workoutTypes: workoutTypes
+                programs: programs,
+                activeProgramId: activeProgramId
             };
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backupData, null, 2));
             const downloadAnchor = document.createElement('a');
@@ -509,14 +817,28 @@
             reader.onload = function(e) {
                 try {
                     const imported = JSON.parse(e.target.result);
-                    if (imported.workouts && imported.workoutTypes) {
+                    if (imported.workouts && (imported.programs || imported.workoutTypes)) {
                         if (confirm("Attenzione: questo sovrascriverà tutti i dati attuali con quelli del backup. Vuoi procedere?")) {
                             workouts = imported.workouts;
-                            workoutTypes = imported.workoutTypes;
+                            if (imported.programs) {
+                                programs = imported.programs;
+                                activeProgramId = imported.activeProgramId || Object.keys(programs)[0];
+                            } else if (imported.workoutTypes) {
+                                // Backward compatibility with v1 backup
+                                programs = {
+                                    "default": {
+                                        name: "Scheda Importata",
+                                        types: imported.workoutTypes.map((wt, idx) => ({ id: 't_'+idx, name: wt, color: "#3b82f6" }))
+                                    }
+                                };
+                                activeProgramId = "default";
+                            }
                             localStorage.setItem('gym_workouts', JSON.stringify(workouts));
-                            localStorage.setItem('gym_workout_types', JSON.stringify(workoutTypes));
+                            localStorage.setItem('gym_programs', JSON.stringify(programs));
+                            localStorage.setItem('gym_active_program', activeProgramId);
                             alert("Backup importato con successo!");
                             renderCalendar();
+                            renderProgramSelect();
                             renderWorkoutTypesList();
                         }
                     } else {
